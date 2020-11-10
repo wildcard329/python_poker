@@ -1,4 +1,5 @@
 from deck import Deck
+from hand import Hand
 import random
 
 class Game():
@@ -6,6 +7,8 @@ class Game():
         self.deck = Deck()
         self.hand = []
         self.not_keeping = []
+        self.money = 500
+        self.pot = 0
 
     def start(self):
         self.deck.construct_deck()
@@ -18,18 +21,20 @@ class Game():
         self.hand.append(self.deck.draw())
         self.hand.append(self.deck.draw())
         self.hand.append(self.deck.draw())
+        self.evaluate_hand()
         self.print_hand()
-
-    def replace(self, **cards):
-        for card in cards:
-            self.hand.remove(card)
-            self.deck.append(card)
-            self.hand.append(self.deck.draw())
 
     def print_hand(self):
         for i in range(len(self.hand)):
             print(f"{self.hand[i].value} of {self.hand[i].suite}\t\t{i + 1}")
             # card.print_card()
+
+    def evaluate_hand(self):
+        hand_value = Hand()
+        hand_value.read_hand(self.hand)
+
+    def place_bet(self):
+        pass
 
     def exchange_message(self):
         print('You may exchange a card from your hand, enter card number, or 0 when done.')
@@ -39,12 +44,9 @@ class Game():
         while exchange != '0':
             self.exchange_message()
             exchange = input('> ')
-            self.not_keeping.append(int(exchange))
+            if exchange != '0':
+                self.not_keeping.append(self.hand[int(exchange) - 1])
             if exchange == '0':
-                self.not_keeping.remove(self.not_keeping[-1])
-                for card in self.not_keeping:
-                    print(card)
-                    card = int(card)
                 print(f"Exchange {self.not_keeping}?")
                 confirmation = input('[y]\t[n] ')
                 if confirmation == 'y':
@@ -54,17 +56,19 @@ class Game():
                     self.exchange_cards()
 
     def finalize_exchange(self):
-        for i in range(len(self.hand)):
-            if i - 1 in self.not_keeping:
-                self.deck.return_to_deck(self.hand[i - 1])
-                self.hand.remove(self.hand[i - 1])
+        for card in self.hand:
+            if card in self.not_keeping:
+                self.deck.return_to_deck(card)
+                self.hand.remove(card)
                 self.hand.append(self.deck.draw())
         self.not_keeping = []
+        self.evaluate_hand()
         self.print_hand()
 
     def round(self):
         self.draw_opening()
         self.exchange_cards()
+
 
 g = Game()
 g.round()
