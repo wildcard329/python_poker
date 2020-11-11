@@ -3,63 +3,54 @@ from card import Card
 class Hand():
     def __init__(self):
         self.hand = []
-        self.values = set()
-        self.suites = set()
+        self.values = {}
+        self.suites = {}
+        self.pair = None
+        self.two_pair = None
+        self.three_kind = None
+        self.flush = None
+        self.full_house = None
+        self.four_kind = None
 
     def read_hand(self, hand):
+        vals = {}
         for card in hand:
             self.hand.append(card)
         for card in self.hand:
-            self.values.add(card.value)
-            self.suites.add(card.suite)
-        print(f"hand: {self.hand}\nvalues: {len(self.values)}\nsuites: {len(self.suites)}")
-        print(self.evaluate_hand())
+            if card.value not in self.values:
+                self.values[card.value] = []
+            self.values[card.value].append(card)
+            if card.suite not in self.suites:
+                self.suites[card.suite] = []
+            self.suites[card.suite].append(card)
 
+        for card in self.values:
+            if len(self.values[card]) == 2:
+                self.pair = f"Pair of {card}s"
+                self.two_pair = []
+                self.two_pair.append(card)
+            elif len(self.values[card]) == 3:
+                self.three_kind = f"Three {card}s"
+            elif len(self.values[card]) == 4:
+                self.four_kind = f"Four {card}s"
+
+        if self.pair is not None and self.three_kind is not None:
+            self.full_house = f"{self.three_kind}, {self.pair}"
+
+        for card in self.suites:
+            if len(self.suites[card]) == 1:
+                self.flush = f"{card} flush"
+        self.evaluate_hand()
+        
     def evaluate_hand(self):
-        self.check_for_pair()
-        self.check_for_two_pair()
-        self.check_for_three_of_a_kind()
-        self.check_for_flush()
-        self.check_for_full_house()
-        self.check_for_four_of_a_kind()
-
-    def check_for_pair(self):
-        if len(self.values) == 4:
-            for card in self.hand:
-                if self.hand.count(card.value) == 2:
-                    pair = f"Pair of {card.value}s"
-                    print(pair)
-                    return pair
-
-    def check_for_two_pair(self):
-        if len(self.values) == 3:
-            for card1 in self.hand:
-                for card2 in self.hand:
-                    if self.hand.count(card1) == 2 and self.hand.count(card2) == 2:
-                        pairs = f"Pair of {card1.value}s and pair of {card2.value}s"
-                        print(pairs)
-                        return pairs
-
-    def check_for_three_of_a_kind(self):
-        if len(self.values) == 3:
-            for card in self.hand:
-                if self.hand.count(card) == 3:
-                    three_kind = f"Three {card.value}s"
-
-    def check_for_full_house(self):
-        self.check_for_pair()
-        self.check_for_three_of_a_kind
-
-    def check_for_four_of_a_kind(self):
-        if len(self.values) == 2:
-            for card in self.hand:
-                if self.hand.count(card) == 4:
-                    four_kind = f"Four {card.value}s"
-
-    def check_for_flush(self):
-        if len(self.suites) == 1:
-            for card in self.hand:
-                if self.hand.count(card.suite) == 5:
-                    flush = f"{card.suite} flush"
-                    print(flush)
-                    return flush
+        if self.pair is not None:
+            print(self.pair)
+        if self.two_pair is not None and len(self.two_pair) == 2:
+            print(f"Pair of {self.two_pair[0]}s and {self.two_pair[1]}s")
+        if self.three_kind is not None:
+            print(self.three_kind)
+        if self.four_kind is not None:
+            print(self.four_kind)
+        if self.full_house is not None:
+            print(self.full_house)
+        

@@ -48,12 +48,17 @@ class Game():
                 self.not_keeping.append(self.hand[int(exchange) - 1])
             if exchange == '0':
                 print(f"Exchange {self.not_keeping}?")
+                self.confirm_exchange()
                 confirmation = input('[y]\t[n] ')
                 if confirmation == 'y':
                     self.finalize_exchange()
                 elif confirmation == 'n':
                     self.not_keeping = []
                     self.exchange_cards()
+
+    def confirm_exchange(self):
+        for card in self.not_keeping:
+            print(card),
 
     def finalize_exchange(self):
         for card in self.hand:
