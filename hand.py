@@ -53,4 +53,16 @@ class Hand():
             print(self.four_kind)
         if self.full_house is not None:
             print(self.full_house)
-        
+        self.reset()
+
+    def reset(self):
+        self.hand = []
+        self.values = {}
+        self.suites = {}
+        self.pair = None
+        self.two_pair = None
+        self.three_kind = None
+        self.flush = None
+        self.full_house = None
+        self.four_kind = None
+
